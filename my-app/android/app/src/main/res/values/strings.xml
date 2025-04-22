@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Doktor Randevu</string>
+    <string name="title_activity_main">Doktor Randevu</string>
+    <string name="package_name">com.elife.doktorrandevu</string>
+    <string name="custom_url_scheme">com.elife.doktorrandevu</string>
+</resources>
