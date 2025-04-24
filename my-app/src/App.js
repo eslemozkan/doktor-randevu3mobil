@@ -129,9 +129,9 @@ function App() {
                       </a>
                       <a 
                         href="#about" 
-                        className="border-2 border-[#394C8C] text-[#394C8C] px-8 py-3 md:px-10 md:py-4 
-                                   rounded-full font-semibold hover:bg-[#394C8C] 
-                                   hover:text-white transition-colors shadow-lg hover:shadow-xl text-center"
+                        className="border-2 border-[#394C8C] text-[#394C8C] px-6 py-2 md:px-8 md:py-3 rounded-full 
+                                   font-semibold hover:bg-[#394C8C] hover:text-white transition-colors 
+                                   shadow-lg hover:shadow-xl text-center text-xs md:text-sm"
                       >
                         Hakkımda
                       </a>
@@ -175,10 +175,10 @@ function App() {
                 <div className="text-center mb-12">
                   <div className="flex items-center justify-center space-x-4 mb-4">
                     <div className="h-[3px] w-20 bg-[#394C8C]"></div>
-                    <h2 className="text-4xl font-bold text-[#1E2E62]">Blog Yazıları</h2>
+                    <h2 className="text-2xl md:text-4xl font-bold text-[#1E2E62]">Blog Yazıları</h2>
                     <div className="h-[3px] w-20 bg-[#394C8C]"></div>
                   </div>
-                  <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                  <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto">
                     Sağlık, beslenme ve yaşam kalitesi hakkında güncel bilgiler
                   </p>
                 </div>
@@ -186,7 +186,7 @@ function App() {
                 <div className="relative flex items-center justify-center">
                   <button 
                     onClick={handlePrevBlog}
-                    className="absolute left-0 z-10 w-12 h-12 bg-[#394C8C] text-white rounded-full 
+                    className="absolute left-0 z-10 w-10 h-10 md:w-12 md:h-12 bg-[#394C8C] text-white rounded-full 
                                flex items-center justify-center hover:bg-opacity-90 transition-all"
                   >
                     <FontAwesomeIcon icon={faChevronLeft} />
@@ -194,41 +194,41 @@ function App() {
                   
                   <button 
                     onClick={handleNextBlog}
-                    className="absolute right-0 z-10 w-12 h-12 bg-[#394C8C] text-white rounded-full 
+                    className="absolute right-0 z-10 w-10 h-10 md:w-12 md:h-12 bg-[#394C8C] text-white rounded-full 
                                flex items-center justify-center hover:bg-opacity-90 transition-all"
                   >
                     <FontAwesomeIcon icon={faChevronRight} />
                   </button>
 
-                  <div className="grid grid-cols-3 gap-8 mx-16 overflow-hidden">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-16 overflow-hidden">
                     {getVisibleBlogs().map((post, index) => (
                       <div 
                         key={post.id} 
                         className={`bg-white rounded-2xl overflow-hidden shadow-lg 
                                     transform transition-all duration-300 hover:-translate-y-2 
                                     hover:shadow-xl group
-                                    ${index === 1 ? 'scale-105 z-10' : 'scale-90 opacity-70 z-0'}`}
+                                    ${index === 1 ? 'scale-105 z-10' : 'scale-90 opacity-70 z-0 hidden md:block'}`}
                       >
                         <div className="relative overflow-hidden">
                           <img 
                             src={post.image} 
                             alt={post.title} 
-                            className="w-full h-[250px] object-cover 
+                            className="w-full h-[200px] md:h-[250px] object-cover 
                                        transform transition-transform duration-300 
                                        group-hover:scale-110"
                           />
                         </div>
                         
-                        <div className="p-6">
-                          <h3 className="text-xl font-bold text-[#1E2E62] mb-3 
+                        <div className="p-4 md:p-6">
+                          <h3 className="text-lg md:text-xl font-bold text-[#1E2E62] mb-2 md:mb-3 
                                          group-hover:text-[#394C8C] transition-colors">
                             {post.title}
                           </h3>
-                          <p className="text-gray-600 mb-4">{post.excerpt}</p>
+                          <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">{post.excerpt}</p>
                           
                           <button 
                             className="group flex items-center space-x-2 text-[#394C8C] 
-                                       font-semibold hover:text-[#5A70B9] transition-colors"
+                                       font-semibold hover:text-[#5A70B9] transition-colors text-sm md:text-base"
                           >
                             <span>Devamını Oku</span>
                             <FontAwesomeIcon icon={faArrowRight} className="transform group-hover:translate-x-1 transition-transform" />
@@ -244,84 +244,82 @@ function App() {
             {/* Social Media & Appointment Section */}
             <section id="appointment" className="py-16 bg-[#EFF5FB] w-full">
               <div className="container mx-auto px-4 w-full">
-                <div className="grid grid-cols-12 gap-12">
-                  <div className="col-span-6">
-                    <div className="bg-[#394C8C] rounded-[31px] p-8 transition-all duration-300 hover:shadow-xl">
-                      <h2 className="text-3xl font-bold text-white mb-8 flex items-center">
-                        <FontAwesomeIcon icon={['fab', 'share-alt']} className="mr-4" /> 
-                        Sosyal Medya Hesaplarımız
-                      </h2>
-                      <div className="space-y-4">
-                        <a 
-                          href="https://facebook.com/profdr.yusufozkan" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="w-full bg-[#5A70B9] text-white py-4 px-6 rounded-[17px] font-bold text-left flex items-center 
-                                     transition-all duration-300 hover:bg-blue-600 group"
-                        >
-                          <FontAwesomeIcon icon={['fab', 'facebook']} className="mr-3 text-xl group-hover:scale-110 transition-transform" /> 
-                          Facebook Sayfamız
-                        </a>
-                        <a 
-                          href="https://twitter.com/profdr_yusufozkan" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="w-full bg-[#5A70B9] text-white py-4 px-6 rounded-[17px] font-bold text-left flex items-center 
-                                     transition-all duration-300 hover:bg-blue-400 group"
-                        >
-                          <FontAwesomeIcon icon={['fab', 'twitter']} className="mr-3 text-xl group-hover:scale-110 transition-transform" /> 
-                          Twitter Hesabımız
-                        </a>
-                        <a 
-                          href="https://instagram.com/profdr.yusufozkan" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="w-full bg-[#5A70B9] text-white py-4 px-6 rounded-[17px] font-bold text-left flex items-center 
-                                     transition-all duration-300 hover:bg-pink-600 group"
-                        >
-                          <FontAwesomeIcon icon={['fab', 'instagram']} className="mr-3 text-xl group-hover:scale-110 transition-transform" /> 
-                          Instagram Sayfamız
-                        </a>
-                        <a 
-                          href="https://linkedin.com/in/profdryusufozkan" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="w-full bg-[#5A70B9] text-white py-4 px-6 rounded-[17px] font-bold text-left flex items-center 
-                                     transition-all duration-300 hover:bg-blue-700 group"
-                        >
-                          <FontAwesomeIcon icon={['fab', 'linkedin']} className="mr-3 text-xl group-hover:scale-110 transition-transform" /> 
-                          LinkedIn Profilimiz
-                        </a>
-                      </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                  <div className="bg-[#394C8C] rounded-[31px] p-6 md:p-8 transition-all duration-300 hover:shadow-xl">
+                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 md:mb-8 flex items-center">
+                      <FontAwesomeIcon icon={['fab', 'share-alt']} className="mr-4" /> 
+                      Sosyal Medya Hesaplarımız
+                    </h2>
+                    <div className="space-y-4">
+                      <a 
+                        href="https://facebook.com/profdr.yusufozkan" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="w-full bg-[#5A70B9] text-white py-3 md:py-4 px-4 md:px-6 rounded-[17px] font-bold text-left flex items-center 
+                                   transition-all duration-300 hover:bg-blue-600 group text-sm md:text-base"
+                      >
+                        <FontAwesomeIcon icon={['fab', 'facebook']} className="mr-3 text-lg md:text-xl group-hover:scale-110 transition-transform" /> 
+                        Facebook Sayfamız
+                      </a>
+                      <a 
+                        href="https://twitter.com/profdr_yusufozkan" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="w-full bg-[#5A70B9] text-white py-3 md:py-4 px-4 md:px-6 rounded-[17px] font-bold text-left flex items-center 
+                                   transition-all duration-300 hover:bg-blue-400 group text-sm md:text-base"
+                      >
+                        <FontAwesomeIcon icon={['fab', 'twitter']} className="mr-3 text-lg md:text-xl group-hover:scale-110 transition-transform" /> 
+                        Twitter Hesabımız
+                      </a>
+                      <a 
+                        href="https://instagram.com/profdr.yusufozkan" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="w-full bg-[#5A70B9] text-white py-3 md:py-4 px-4 md:px-6 rounded-[17px] font-bold text-left flex items-center 
+                                   transition-all duration-300 hover:bg-pink-600 group text-sm md:text-base"
+                      >
+                        <FontAwesomeIcon icon={['fab', 'instagram']} className="mr-3 text-lg md:text-xl group-hover:scale-110 transition-transform" /> 
+                        Instagram Sayfamız
+                      </a>
+                      <a 
+                        href="https://linkedin.com/in/profdryusufozkan" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="w-full bg-[#5A70B9] text-white py-3 md:py-4 px-4 md:px-6 rounded-[17px] font-bold text-left flex items-center 
+                                   transition-all duration-300 hover:bg-blue-700 group text-sm md:text-base"
+                      >
+                        <FontAwesomeIcon icon={['fab', 'linkedin']} className="mr-3 text-lg md:text-xl group-hover:scale-110 transition-transform" /> 
+                        LinkedIn Profilimiz
+                      </a>
                     </div>
                   </div>
-                  <div className="col-span-6 flex flex-col items-center justify-center bg-white rounded-[31px] p-10 shadow-xl">
-                    <div className="text-center mb-6">
-                      <h2 className="text-3xl font-bold text-[#394C8C] mb-4">
+                  <div className="flex flex-col items-center justify-center bg-white rounded-[31px] p-6 md:p-10 shadow-xl">
+                    <div className="text-center mb-4 md:mb-6">
+                      <h2 className="text-2xl md:text-3xl font-bold text-[#394C8C] mb-2 md:mb-4">
                         Hemen Randevu Oluşturun
                       </h2>
-                      <p className="text-gray-600 max-w-md mx-auto">
+                      <p className="text-sm md:text-base text-gray-600 max-w-md mx-auto">
                         Sağlık danışmanlığı ve muayene için hızlı ve kolay bir şekilde randevu alabilirsiniz.
                       </p>
                     </div>
                     
-                    <div className="flex items-center bg-[#EFF5FB] p-4 rounded-xl w-full">
-                      <div className="mr-4">
+                    <div className="flex items-center bg-[#EFF5FB] p-3 md:p-4 rounded-xl w-full">
+                      <div className="mr-3 md:mr-4">
                         <FontAwesomeIcon 
                           icon={faCalendarAlt} 
-                          className="text-3xl text-[#394C8C]" 
+                          className="text-2xl md:text-3xl text-[#394C8C]" 
                         />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-[#1E2E62]">Hızlı Randevu</h3>
-                        <p className="text-sm text-gray-600">
+                        <h3 className="font-semibold text-[#1E2E62] text-sm md:text-base">Hızlı Randevu</h3>
+                        <p className="text-xs md:text-sm text-gray-600">
                           Online olarak dakikalar içinde randevu alın
                         </p>
                       </div>
                     </div>
                     
                     <button 
-                      className="mt-8 bg-[#394C8C] text-white px-12 py-4 rounded-full font-semibold text-xl 
+                      className="mt-6 md:mt-8 bg-[#394C8C] text-white px-8 md:px-12 py-3 md:py-4 rounded-full font-semibold text-base md:text-xl 
                                  transition-all duration-300 hover:bg-[#5A70B9] hover:shadow-xl"
                       onClick={() => navigate('/appointment')}
                     >
@@ -339,6 +337,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/appointment" element={<AppointmentFormPage />} />
+        <Route path="/hakkimda-detay" element={<AboutDetail />} />
       </Routes>
     </div>
   );

@@ -7,20 +7,32 @@ function About() {
   return (
     <section 
       id="about" 
-      className="relative bg-gradient-to-r from-[#F5F7FA] to-[#EFF5FB] py-20 overflow-hidden"
+      className="relative bg-gradient-to-r from-[#F5F7FA] to-[#EFF5FB] py-16 md:py-20 overflow-hidden"
     >
-      <div className="container mx-auto px-8 relative z-10">
-        <div className="grid grid-cols-12 gap-8 items-center">
-          <div className="col-span-7 space-y-8 pr-16">
+      <div className="container mx-auto px-4 md:px-8 relative z-10">
+        <div className="flex flex-col items-center">
+          <div className="w-full max-w-3xl space-y-6 md:space-y-8">
             <div className="flex items-center space-x-4">
               <div className="h-[3px] w-20 bg-[#394C8C]"></div>
-              <h2 className="text-4xl font-bold text-[#1E2E62] flex items-center space-x-3">
+              <h2 className="text-xl md:text-3xl font-bold text-[#1E2E62] flex items-center space-x-3">
                 <FontAwesomeIcon icon={faUserMd} className="text-[#394C8C] mr-3" />
                 Hakkımda
               </h2>
             </div>
             
-            <p className="text-xl text-gray-700 leading-relaxed">
+            <div className="relative w-full max-w-[200px] mx-auto">
+              <div className="absolute -left-3 -top-3 w-24 h-24 md:w-32 md:h-32 bg-[#394C8C] opacity-10 rounded-full"></div>
+              <div className="relative z-10">
+                <img
+                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/e5bedf5daa1fa33924ca0fa3b917efebf9d03dec?placeholderIfAbsent=true&apiKey=2700ab3a3a4f4b8a8b2827e6c4722a8f"
+                  alt="Prof. Dr. Yusuf Özkan"
+                  className="w-full rounded-xl shadow-lg object-cover aspect-[3/4]"
+                />
+                <div className="absolute inset-0 bg-[#394C8C] opacity-20 rounded-xl hover:opacity-0 transition-opacity duration-500"></div>
+              </div>
+            </div>
+            
+            <p className="text-base md:text-xl text-gray-700 leading-relaxed">
               Endokrinoloji ve Metabolizma Hastalıkları alanında uzman bir hekim olarak, 
               hastalarımın sağlığına ve yaşam kalitesine odaklanıyorum. Diyabet, tiroid 
               hastalıkları, hormon bozuklukları gibi karmaşık sağlık sorunlarında 
@@ -29,18 +41,18 @@ function About() {
             
             <div className="space-y-4">
               <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-[#394C8C] text-white rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-[#394C8C] text-white rounded-full flex items-center justify-center">
                   <FontAwesomeIcon icon={faArrowRight} />
                 </div>
-                <span className="text-lg font-semibold text-[#1E2E62]">
+                <span className="text-base md:text-lg font-semibold text-[#1E2E62]">
                   +20 Yıllık Deneyim Uzmanı
                 </span>
               </div>
               <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-[#394C8C] text-white rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-[#394C8C] text-white rounded-full flex items-center justify-center">
                   <FontAwesomeIcon icon={faArrowRight} />
                 </div>
-                <span className="text-lg font-semibold text-[#1E2E62]">
+                <span className="text-base md:text-lg font-semibold text-[#1E2E62]">
                   Ulusal ve Uluslararası Kongre Katılımları
                 </span>
               </div>
@@ -49,8 +61,8 @@ function About() {
             <Link 
               to="/hakkimda-detay" 
               className="group flex items-center space-x-3 bg-[#394C8C] text-white 
-                         px-8 py-4 rounded-full font-semibold hover:bg-[#5A70B9] 
-                         transition-all duration-300 shadow-lg hover:shadow-xl"
+                         px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold hover:bg-[#5A70B9] 
+                         transition-all duration-300 shadow-lg hover:shadow-xl text-sm md:text-base"
             >
               <span>Detaylı Özgeçmiş</span>
               <FontAwesomeIcon 
@@ -58,18 +70,6 @@ function About() {
                 className="transform transition-transform group-hover:translate-x-1"
               />
             </Link>
-          </div>
-          
-          <div className="col-span-5 relative">
-            <div className="absolute -left-16 -top-16 w-96 h-96 bg-[#394C8C] opacity-10 rounded-full"></div>
-            <div className="relative z-10">
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/e5bedf5daa1fa33924ca0fa3b917efebf9d03dec?placeholderIfAbsent=true&apiKey=2700ab3a3a4f4b8a8b2827e6c4722a8f"
-                alt="Prof. Dr. Yusuf Özkan"
-                className="w-full rounded-3xl shadow-2xl object-cover aspect-[3/4]"
-              />
-              <div className="absolute inset-0 bg-[#394C8C] opacity-20 rounded-3xl hover:opacity-0 transition-opacity duration-500"></div>
-            </div>
           </div>
         </div>
       </div>

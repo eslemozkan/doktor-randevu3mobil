@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight, faPlayCircle, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import { Browser } from '@capacitor/browser';
 
 const Videos = () => {
   const navigate = useNavigate();
@@ -51,16 +52,21 @@ const Videos = () => {
     navigate('/videolar');
   };
 
+  const openYouTubeVideo = async (youtubeId) => {
+    const url = `https://www.youtube.com/watch?v=${youtubeId}`;
+    await Browser.open({ url });
+  };
+
   return (
     <section id="videos" className="py-20 bg-gradient-to-r from-[#F5F7FA] to-[#EFF5FB]">
       <div className="container mx-auto px-8">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center space-x-4 mb-4">
             <div className="h-[3px] w-20 bg-[#394C8C]"></div>
-            <h2 className="text-4xl font-bold text-[#1E2E62]">Videolar</h2>
+            <h2 className="text-2xl md:text-4xl font-bold text-[#1E2E62]">Videolar</h2>
             <div className="h-[3px] w-20 bg-[#394C8C]"></div>
           </div>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto">
             Sağlık ve yaşam kalitesi hakkında güncel bilgiler ve profesyonel yaklaşımlar
           </p>
         </div>
@@ -68,7 +74,7 @@ const Videos = () => {
         <div className="relative flex items-center justify-center">
           <button 
             onClick={handlePrev}
-            className="absolute left-0 z-10 w-12 h-12 bg-[#394C8C] text-white rounded-full 
+            className="absolute left-0 z-10 w-10 h-10 md:w-12 md:h-12 bg-[#394C8C] text-white rounded-full 
                        flex items-center justify-center hover:bg-opacity-90 transition-all"
           >
             <FontAwesomeIcon icon={faChevronLeft} />
@@ -76,13 +82,13 @@ const Videos = () => {
           
           <button 
             onClick={handleNext}
-            className="absolute right-0 z-10 w-12 h-12 bg-[#394C8C] text-white rounded-full 
+            className="absolute right-0 z-10 w-10 h-10 md:w-12 md:h-12 bg-[#394C8C] text-white rounded-full 
                        flex items-center justify-center hover:bg-opacity-90 transition-all"
           >
             <FontAwesomeIcon icon={faChevronRight} />
           </button>
           
-          <div className="grid grid-cols-3 gap-8 mx-16 overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mx-16 md:mx-16 overflow-hidden">
             {getVisibleVideos().map((video, index) => (
               <div 
                 key={video.id} 
@@ -90,7 +96,7 @@ const Videos = () => {
                             transition-all duration-500 ease-in-out
                             ${index === 1 
                               ? 'scale-105 z-10' 
-                              : 'scale-90 opacity-70 z-0'}`}
+                              : 'scale-90 opacity-70 z-0 hidden md:block'}`}
                 style={{
                   transitionProperty: 'transform, opacity, z-index',
                   willChange: 'transform, opacity'
@@ -100,29 +106,39 @@ const Videos = () => {
                   <img 
                     src={video.thumbnail} 
                     alt={video.title} 
-                    className="w-full h-full object-cover cursor-pointer"
-                    onClick={() => {
-                      window.open(`https://www.youtube.com/watch?v=${video.youtubeId}`, '_blank');
-                    }}
+                    className="w-full h-full object-cover transform transition-transform duration-300 
+                               group-hover:scale-110 cursor-pointer"
+                    onClick={() => openYouTubeVideo(video.youtubeId)}
                   />
-                  <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 
-                                  group-hover:opacity-100 transition-opacity duration-300 
-                                  flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center 
+                                 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <FontAwesomeIcon 
                       icon={faPlayCircle} 
-                      className="text-white text-5xl opacity-80 hover:opacity-100 
-                                 transform hover:scale-110 transition-all cursor-pointer"
-                      onClick={() => {
-                        window.open(`https://www.youtube.com/watch?v=${video.youtubeId}`, '_blank');
-                      }}
+                      className="text-white text-4xl md:text-5xl transform transition-transform duration-300 
+                                 group-hover:scale-110 cursor-pointer"
+                      onClick={() => openYouTubeVideo(video.youtubeId)}
                     />
                   </div>
                 </div>
-                
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t 
-                                from-black to-transparent p-4 text-white">
-                  <h3 className="font-bold text-lg">{video.title}</h3>
-                  <p className="text-sm opacity-80">{video.description}</p>
+                <div className="p-4 md:p-6">
+                  <h3 className="text-lg md:text-xl font-bold text-[#1E2E62] mb-2 md:mb-3 
+                                 group-hover:text-[#394C8C] transition-colors">
+                    {video.title}
+                  </h3>
+                  <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
+                    {video.description}
+                  </p>
+                  <button 
+                    className="group flex items-center space-x-2 text-[#394C8C] 
+                               font-semibold hover:text-[#5A70B9] transition-colors text-sm md:text-base"
+                    onClick={() => openYouTubeVideo(video.youtubeId)}
+                  >
+                    <span>İzle</span>
+                    <FontAwesomeIcon 
+                      icon={faArrowRight} 
+                      className="transform group-hover:translate-x-1 transition-transform"
+                    />
+                  </button>
                 </div>
               </div>
             ))}
