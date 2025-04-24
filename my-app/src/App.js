@@ -238,6 +238,21 @@ function App() {
                     ))}
                   </div>
                 </div>
+
+                <div className="flex justify-center mt-12">
+                  <button 
+                    onClick={() => navigate('/blog')}
+                    className="group flex items-center space-x-3 bg-[#394C8C] text-white 
+                               px-8 py-4 rounded-full font-semibold hover:bg-[#5A70B9] 
+                               transition-all duration-300 shadow-lg hover:shadow-xl"
+                  >
+                    <span>Tüm Blog Yazıları</span>
+                    <FontAwesomeIcon 
+                      icon={faArrowRight} 
+                      className="transform transition-transform group-hover:translate-x-1"
+                    />
+                  </button>
+                </div>
               </div>
             </section>
 
@@ -333,6 +348,7 @@ function App() {
         } />
         <Route path="/about" element={<AboutDetail />} />
         <Route path="/videos" element={<AllVideosPage />} />
+        <Route path="/videolar" element={<AllVideosPage />} />
         <Route path="/blog" element={<AllBlogPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
