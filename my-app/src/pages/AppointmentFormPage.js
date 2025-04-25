@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faUser, faPhone, faCalendarAlt, 
-  faNotesMedical, faFileUpload, faClock 
+  faNotesMedical, faFileUpload, faClock,
+  faHome
 } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 
 function AppointmentFormPage() {
+  const navigate = useNavigate();
   const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
   const [selectedTime, setSelectedTime] = useState(null);
@@ -74,17 +77,25 @@ function AppointmentFormPage() {
         }}
       ></div>
 
-      <div className="relative z-10 max-w-xl w-full space-y-8 bg-white p-16 rounded-3xl shadow-2xl border border-[#394C8C]/10 transform transition-all duration-300 hover:scale-[1.01]">
+      <button
+        onClick={() => navigate('/')}
+        className="absolute top-4 left-4 md:top-6 md:left-6 flex items-center space-x-1 text-[#394C8C] hover:text-[#5A70B9] transition-colors z-20 text-sm"
+      >
+        <FontAwesomeIcon icon={faHome} className="text-lg" />
+        <span className="text-xs md:text-sm">Ana Sayfa</span>
+      </button>
+
+      <div className="relative z-10 max-w-xl w-full space-y-8 bg-white p-8 md:p-16 rounded-3xl shadow-2xl border border-[#394C8C]/10 transform transition-all duration-300 hover:scale-[1.01]">
         <div className="text-center">
           <div className="flex justify-center mb-6">
-            <div className="bg-[#394C8C]/10 p-6 rounded-full">
+            <div className="bg-[#394C8C]/10 p-4 md:p-6 rounded-full">
               <FontAwesomeIcon 
                 icon={faCalendarAlt} 
-                className="text-6xl text-[#394C8C] opacity-80" 
+                className="text-4xl md:text-6xl text-[#394C8C] opacity-80" 
               />
             </div>
           </div>
-          <h2 className="text-4xl font-extrabold text-[#394C8C] mb-3 tracking-tight">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-[#394C8C] mb-3 tracking-tight">
             Randevu Oluştur
           </h2>
           <p className="text-sm text-gray-600 max-w-md mx-auto opacity-75">
@@ -93,7 +104,7 @@ function AppointmentFormPage() {
         </div>
         
         <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Ad Soyad */}
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -108,11 +119,12 @@ function AppointmentFormPage() {
                 required
                 value={formData.fullName}
                 onChange={handleChange}
-                className="appearance-none rounded-xl relative block w-full px-12 py-4 border border-gray-300 
+                className="appearance-none rounded-xl relative block w-full px-12 py-3 md:py-4 border border-gray-300 
                            placeholder-gray-500 text-gray-900 focus:outline-none 
                            focus:ring-2 focus:ring-[#394C8C] focus:border-[#394C8C] 
                            transition duration-300 ease-in-out 
-                           hover:shadow-sm group-focus-within:shadow-md"
+                           hover:shadow-sm group-focus-within:shadow-md
+                           placeholder:text-left"
                 placeholder="Ad Soyad"
               />
             </div>
@@ -131,17 +143,18 @@ function AppointmentFormPage() {
                 required
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                className="appearance-none rounded-xl relative block w-full px-12 py-4 border border-gray-300 
+                className="appearance-none rounded-xl relative block w-full px-12 py-3 md:py-4 border border-gray-300 
                            placeholder-gray-500 text-gray-900 focus:outline-none 
                            focus:ring-2 focus:ring-[#394C8C] focus:border-[#394C8C] 
                            transition duration-300 ease-in-out 
-                           hover:shadow-sm group-focus-within:shadow-md"
+                           hover:shadow-sm group-focus-within:shadow-md
+                           placeholder:text-left"
                 placeholder="Telefon Numarası (Başında 0 olmadan)"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Tarih Seçimi */}
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -153,7 +166,7 @@ function AppointmentFormPage() {
               <button
                 type="button"
                 onClick={() => setIsDateModalOpen(true)}
-                className="appearance-none rounded-xl relative block w-full px-12 py-4 border border-gray-300 
+                className="appearance-none rounded-xl relative block w-full px-12 py-3 md:py-4 border border-gray-300 
                            placeholder-gray-500 text-gray-900 focus:outline-none 
                            focus:ring-2 focus:ring-[#394C8C] focus:border-[#394C8C] 
                            transition duration-300 ease-in-out text-left
@@ -174,7 +187,7 @@ function AppointmentFormPage() {
               <button
                 type="button"
                 onClick={() => setIsTimeModalOpen(true)}
-                className="appearance-none rounded-xl relative block w-full px-12 py-4 border border-gray-300 
+                className="appearance-none rounded-xl relative block w-full px-12 py-3 md:py-4 border border-gray-300 
                            placeholder-gray-500 text-gray-900 focus:outline-none 
                            focus:ring-2 focus:ring-[#394C8C] focus:border-[#394C8C] 
                            transition duration-300 ease-in-out text-left
@@ -187,7 +200,7 @@ function AppointmentFormPage() {
 
           {/* Dosya Yükleme */}
           <div className="relative group">
-            <div className="text-xs text-gray-500 mb-2 pl-12 flex items-center">
+            <div className="text-xs text-gray-500 mb-2 text-center">
               Tahlil sonuçlarınızı PDF veya görüntü formatında yükleyebilirsiniz
             </div>
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -200,7 +213,7 @@ function AppointmentFormPage() {
               type="file"
               name="medicalFile"
               onChange={handleChange}
-              className="appearance-none rounded-xl relative block w-full px-12 py-4 border border-gray-300 
+              className="appearance-none rounded-xl relative block w-full px-12 py-3 md:py-4 border border-gray-300 
                          placeholder-gray-500 text-gray-900 focus:outline-none 
                          focus:ring-2 focus:ring-[#394C8C] focus:border-[#394C8C] 
                          transition duration-300 ease-in-out 
@@ -227,7 +240,7 @@ function AppointmentFormPage() {
               className="appearance-none rounded-xl relative block w-full px-12 py-4 border border-gray-300 
                          placeholder-gray-500 text-gray-900 focus:outline-none 
                          focus:ring-2 focus:ring-[#394C8C] focus:border-[#394C8C] 
-                         transition duration-300 ease-in-out min-h-[150px]
+                         transition duration-300 ease-in-out min-h-[200px]
                          hover:shadow-sm group-focus-within:shadow-md"
               placeholder="Şikayetinizi detaylı olarak açıklayın"
             />
@@ -236,7 +249,7 @@ function AppointmentFormPage() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-4 px-6 
+              className="group relative w-full flex justify-center py-3 md:py-4 px-6 
                          border border-transparent text-lg font-bold rounded-full 
                          text-white bg-gradient-to-r from-[#394C8C] to-[#5A70B9]
                          hover:from-[#5A70B9] hover:to-[#394C8C]

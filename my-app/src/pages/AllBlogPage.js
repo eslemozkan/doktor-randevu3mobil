@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
@@ -6,28 +6,30 @@ import BlogModal from '../components/BlogModal';
 
 const AllBlogPage = () => {
   const [selectedBlog, setSelectedBlog] = useState(null);
-  const [blogPosts, setBlogPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchBlogPosts = async () => {
-      try {
-        const response = await fetch('YOUR_API_ENDPOINT/blogs');
-        if (!response.ok) {
-          throw new Error('Blog yazıları yüklenirken bir hata oluştu');
-        }
-        const data = await response.json();
-        setBlogPosts(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBlogPosts();
-  }, []);
+  const staticBlogPosts = [
+    {
+      id: 1,
+      title: "Diyabet ve Beslenme Stratejileri",
+      excerpt: "Sağlıklı yaşam için doğru beslenme alışkanlıkları ve diyabet yönetimi",
+      image_url: "https://via.placeholder.com/400x250?text=Blog+1",
+      content: "Diyabet hastaları için beslenme önerileri ve dikkat edilmesi gerekenler hakkında detaylı bilgiler..."
+    },
+    {
+      id: 2,
+      title: "Tiroid Hastalıklarında Beslenme",
+      excerpt: "Tiroid sağlığını destekleyen doğal yöntemler",
+      image_url: "https://via.placeholder.com/400x250?text=Blog+2",
+      content: "Tiroid hastalıklarının belirtileri, teşhisi ve tedavi yöntemleri hakkında detaylı bilgiler..."
+    },
+    {
+      id: 3,
+      title: "Metabolik Sağlık ve Egzersiz",
+      excerpt: "Metabolik hastalıklardan korunma ve tedavi yöntemleri",
+      image_url: "https://via.placeholder.com/400x250?text=Blog+3",
+      content: "Metabolik sağlık için egzersiz önerileri ve yaşam tarzı değişiklikleri hakkında detaylı bilgiler..."
+    }
+  ];
 
   const handleBlogClick = (blog) => {
     setSelectedBlog(blog);
@@ -36,33 +38,6 @@ const AllBlogPage = () => {
   const handleCloseModal = () => {
     setSelectedBlog(null);
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-[#EFF5FB] to-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#394C8C] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Blog yazıları yükleniyor...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-[#EFF5FB] to-white flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-500 mb-4">{error}</p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="text-[#394C8C] hover:text-[#5A70B9] transition-colors"
-          >
-            Tekrar Dene
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#EFF5FB] to-white">
@@ -90,7 +65,7 @@ const AllBlogPage = () => {
 
         <div className="max-w-2xl mx-auto">
           <div className="grid grid-cols-1 gap-8">
-            {blogPosts.map((post) => (
+            {staticBlogPosts.map((post) => (
               <div 
                 key={post.id}
                 className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
@@ -98,7 +73,7 @@ const AllBlogPage = () => {
                 <div className="flex flex-col md:flex-row">
                   <div className="w-full md:w-1/4 relative overflow-hidden">
                     <img 
-                      src={post.image} 
+                      src={post.image_url} 
                       alt={post.title}
                       className="w-full h-40 md:h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
                     />

@@ -59,16 +59,12 @@ function About() {
             </div>
             
             <Link 
-              to="/hakkimda-detay" 
-              className="group flex items-center space-x-3 bg-[#394C8C] text-white 
-                         px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold hover:bg-[#5A70B9] 
-                         transition-all duration-300 shadow-lg hover:shadow-xl text-sm md:text-base"
+              to="/hakkimda-detay"
+              className="inline-flex items-center justify-center px-6 py-3 bg-[#394C8C] text-white rounded-full 
+                         hover:bg-[#5A70B9] transition-colors duration-300 shadow-lg hover:shadow-xl"
             >
-              <span>Detaylı Özgeçmiş</span>
-              <FontAwesomeIcon 
-                icon={faArrowRight} 
-                className="transform transition-transform group-hover:translate-x-1"
-              />
+              <span className="mr-2">Detaylı Özgeçmiş</span>
+              <FontAwesomeIcon icon={faArrowRight} />
             </Link>
           </div>
         </div>

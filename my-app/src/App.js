@@ -2,17 +2,22 @@ import React, { useState } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fab } from '@fortawesome/free-brands-svg-icons';
-import { faHeartPulse, faNotesMedical, faDisease, faStethoscope, faArrowRight, faCalendarAlt, faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faHeartPulse, faNotesMedical, faDisease, faStethoscope, faArrowRight, faCalendarAlt, faChevronLeft, faChevronRight, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './index.css';
 import Videos from './Videos';
 import About from './components/About';
-import AboutDetail from './components/AboutDetail';
+import AboutDetail from './pages/AboutDetail';
 import AllVideosPage from './pages/AllVideosPage';
 import AllBlogPage from './pages/AllBlogPage';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import AppointmentFormPage from './pages/AppointmentFormPage';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 // Font Awesome kütüphanesini başlat
 library.add(fab);
@@ -24,7 +29,8 @@ library.add(
   faArrowRight,
   faCalendarAlt,
   faChevronLeft,
-  faChevronRight
+  faChevronRight,
+  faPlay
 );
 
 // Özel kartlar için veri
@@ -75,7 +81,32 @@ const blogPosts = [
 
 function App() {
   const [currentBlogIndex, setCurrentBlogIndex] = useState(0);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const navigate = useNavigate();
+
+  const staticVideos = [
+    {
+      id: 1,
+      title: "Diyabet ve Beslenme",
+      description: "Diyabet hastaları için beslenme önerileri ve dikkat edilmesi gerekenler hakkında bilgilendirici video.",
+      thumbnail: "https://img.youtube.com/vi/xjwQju1p2_w/maxresdefault.jpg",
+      youtubeLink: "https://www.youtube.com/watch?v=xjwQju1p2_w"
+    },
+    {
+      id: 2,
+      title: "Tiroid Hastalıkları",
+      description: "Tiroid hastalıklarının belirtileri, teşhisi ve tedavi yöntemleri hakkında detaylı bilgi.",
+      thumbnail: "https://img.youtube.com/vi/example2/maxresdefault.jpg",
+      youtubeLink: "https://www.youtube.com/watch?v=example2"
+    },
+    {
+      id: 3,
+      title: "Sağlıklı Yaşam İçin Öneriler",
+      description: "Günlük hayatta sağlıklı yaşam için uygulanabilecek pratik öneriler ve ipuçları.",
+      thumbnail: "https://img.youtube.com/vi/example3/maxresdefault.jpg",
+      youtubeLink: "https://www.youtube.com/watch?v=example3"
+    }
+  ];
 
   const handlePrevBlog = () => {
     setCurrentBlogIndex((prevIndex) => (prevIndex === 0 ? blogPosts.length - 1 : prevIndex - 1));
@@ -85,11 +116,27 @@ function App() {
     setCurrentBlogIndex((prevIndex) => (prevIndex === blogPosts.length - 1 ? 0 : prevIndex + 1));
   };
 
+  const handlePrevVideo = () => {
+    setCurrentVideoIndex((prevIndex) => (prevIndex === 0 ? staticVideos.length - 1 : prevIndex - 1));
+  };
+
+  const handleNextVideo = () => {
+    setCurrentVideoIndex((prevIndex) => (prevIndex === staticVideos.length - 1 ? 0 : prevIndex + 1));
+  };
+
   const getVisibleBlogs = () => {
     return [
       blogPosts[currentBlogIndex],
       blogPosts[(currentBlogIndex + 1) % blogPosts.length],
       blogPosts[(currentBlogIndex + 2) % blogPosts.length]
+    ];
+  };
+
+  const getVisibleVideos = () => {
+    return [
+      staticVideos[currentVideoIndex],
+      staticVideos[(currentVideoIndex + 1) % staticVideos.length],
+      staticVideos[(currentVideoIndex + 2) % staticVideos.length]
     ];
   };
 
@@ -167,7 +214,105 @@ function App() {
             </section>
 
             {/* Videos Section */}
-            <Videos />
+            <section className="py-20 bg-gradient-to-r from-[#F5F7FA] to-[#EFF5FB] w-full">
+              <div className="container mx-auto px-4 w-full">
+                <div className="text-center mb-12">
+                  <div className="flex items-center justify-center space-x-4 mb-4">
+                    <div className="h-[3px] w-20 bg-[#394C8C]"></div>
+                    <h2 className="text-2xl md:text-4xl font-bold text-[#1E2E62]">Videolar</h2>
+                    <div className="h-[3px] w-20 bg-[#394C8C]"></div>
+                  </div>
+                  <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto">
+                    Sağlık ve beslenme hakkında eğitici videolar
+                  </p>
+                </div>
+
+                <div className="relative">
+                  <Swiper
+                    modules={[Pagination]}
+                    spaceBetween={30}
+                    slidesPerView={1}
+                    pagination={{ clickable: true }}
+                    breakpoints={{
+                      640: {
+                        slidesPerView: 2,
+                      },
+                      1024: {
+                        slidesPerView: 3,
+                      },
+                    }}
+                    className="py-8"
+                  >
+                    {staticVideos.map((video) => (
+                      <SwiperSlide key={video.id}>
+                        <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 w-[250px] mx-auto">
+                          <div className="relative aspect-video">
+                            <img 
+                              src={video.thumbnail} 
+                              alt={video.title} 
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                            <button
+                              onClick={() => window.open(video.youtubeLink, '_blank')}
+                              className="absolute inset-0 flex items-center justify-center cursor-pointer"
+                            >
+                              <FontAwesomeIcon 
+                                icon={faPlay} 
+                                className="text-white text-3xl transform hover:scale-110 transition-transform"
+                              />
+                            </button>
+                          </div>
+                          <div className="p-3">
+                            <h3 className="text-base font-semibold text-[#1E2E62] line-clamp-2">
+                              {video.title}
+                            </h3>
+                          </div>
+                        </div>
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+
+                  {/* Custom Navigation Buttons */}
+                  <button 
+                    onClick={() => {
+                      const swiper = document.querySelector('.swiper').swiper;
+                      swiper.slidePrev();
+                    }}
+                    className="absolute left-0 z-10 w-10 h-10 md:w-12 md:h-12 bg-[#394C8C] text-white rounded-full 
+                               flex items-center justify-center hover:bg-opacity-90 transition-all top-1/2 -translate-y-1/2"
+                  >
+                    <FontAwesomeIcon icon={faChevronLeft} />
+                  </button>
+                  
+                  <button 
+                    onClick={() => {
+                      const swiper = document.querySelector('.swiper').swiper;
+                      swiper.slideNext();
+                    }}
+                    className="absolute right-0 z-10 w-10 h-10 md:w-12 md:h-12 bg-[#394C8C] text-white rounded-full 
+                               flex items-center justify-center hover:bg-opacity-90 transition-all top-1/2 -translate-y-1/2"
+                  >
+                    <FontAwesomeIcon icon={faChevronRight} />
+                  </button>
+                </div>
+
+                <div className="flex justify-center mt-12">
+                  <button 
+                    onClick={() => navigate('/videos')}
+                    className="group flex items-center space-x-3 bg-[#394C8C] text-white 
+                               px-8 py-4 rounded-full font-semibold hover:bg-[#5A70B9] 
+                               transition-all duration-300 shadow-lg hover:shadow-xl"
+                  >
+                    <span>Tüm Videolar</span>
+                    <FontAwesomeIcon 
+                      icon={faArrowRight} 
+                      className="transform transition-transform group-hover:translate-x-1"
+                    />
+                  </button>
+                </div>
+              </div>
+            </section>
             
             {/* Blog Section */}
             <section id="blog" className="py-20 bg-gradient-to-r from-[#F5F7FA] to-[#EFF5FB] w-full">
@@ -334,9 +479,9 @@ function App() {
                     </div>
                     
                     <button 
+                      onClick={() => navigate('/login')}
                       className="mt-6 md:mt-8 bg-[#394C8C] text-white px-8 md:px-12 py-3 md:py-4 rounded-full font-semibold text-base md:text-xl 
                                  transition-all duration-300 hover:bg-[#5A70B9] hover:shadow-xl"
-                      onClick={() => navigate('/appointment')}
                     >
                       Randevu Oluştur
                     </button>
@@ -347,8 +492,8 @@ function App() {
           </>
         } />
         <Route path="/about" element={<AboutDetail />} />
-        <Route path="/videos" element={<AllVideosPage />} />
-        <Route path="/videolar" element={<AllVideosPage />} />
+        <Route path="/videos" element={<Videos />} />
+        <Route path="/videolar" element={<Videos />} />
         <Route path="/blog" element={<AllBlogPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />

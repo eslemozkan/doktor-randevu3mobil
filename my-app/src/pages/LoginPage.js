@@ -1,136 +1,148 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faLock, faHospitalUser } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faLock, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
-function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+const LoginPage = () => {
   const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useState(true);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    name: '',
+    confirmPassword: ''
+  });
 
-  const handleLogin = (e) => {
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Basit admin kontrolü
-    if (email === 'admin' && password === 'admin') {
-      // Admin girişi için randevu formu sayfasına yönlendir
-      navigate('/appointment-form');
+    if (isLogin) {
+      // Giriş kontrolü
+      if (formData.email === 'test@test.com' && formData.password === '123456') {
+        console.log('Giriş başarılı');
+        navigate('/appointment');
+      } else {
+        alert('E-posta veya şifre hatalı!');
+      }
     } else {
-      // Hatalı giriş durumunda
-      setError('E-posta veya şifre hatalı');
+      // Kayıt işlemi
+      console.log('Kayıt olunuyor:', formData);
+      navigate('/appointment');
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F5F7FA] to-white py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Sade arka plan */}
-      <div 
-        className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none" 
-        style={{
-          backgroundImage: 'radial-gradient(#394C8C 7%, transparent 7%)',
-          backgroundSize: '50px 50px'
-        }}
-      ></div>
-
-      <div className="relative z-10 max-w-lg w-full space-y-8 bg-white p-12 rounded-3xl shadow-2xl border border-[#394C8C]/10 transform transition-all duration-300 hover:scale-[1.01]">
-        <div className="text-center">
-          <div className="flex justify-center mb-6">
-            <FontAwesomeIcon 
-              icon={faHospitalUser} 
-              className="text-6xl text-[#394C8C] mb-4 opacity-80" 
-            />
-          </div>
-          <h2 className="text-4xl font-extrabold text-[#394C8C] mb-3">
-            Randevu Sistemine Giriş Yap
+    <div className="min-h-screen bg-gradient-to-b from-[#EFF5FB] to-white flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-[#1E2E62]">
+            {isLogin ? 'Giriş Yap' : 'Hesap Oluştur'}
           </h2>
-          <p className="text-sm text-gray-600 max-w-md mx-auto">
-            Randevu almak için lütfen giriş yapın
+          <p className="text-gray-600 mt-2">
+            {isLogin 
+              ? 'Randevu oluşturmak için giriş yapın' 
+              : 'Yeni hesap oluşturarak randevu alabilirsiniz'}
           </p>
         </div>
-        
-        <form className="space-y-6" onSubmit={handleLogin}>
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-              {error}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {!isLogin && (
+            <div className="relative">
+              <FontAwesomeIcon 
+                icon={faUser} 
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              />
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Ad Soyad"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#394C8C]"
+                required={!isLogin}
+              />
             </div>
           )}
-          <div className="space-y-4">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <FontAwesomeIcon 
-                  icon={faUser} 
-                  className="text-[#394C8C] opacity-70" 
-                />
-              </div>
-              <input
-                id="email"
-                name="email"
-                type="text"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none rounded-xl relative block w-full px-12 py-4 border border-gray-300 
-                           placeholder-gray-500 text-gray-900 focus:outline-none 
-                           focus:ring-2 focus:ring-[#394C8C] focus:border-[#394C8C] 
-                           transition duration-300 ease-in-out"
-                placeholder="E-posta adresinizi girin"
-              />
-            </div>
 
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <FontAwesomeIcon 
-                  icon={faLock} 
-                  className="text-[#394C8C] opacity-70" 
-                />
-              </div>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none rounded-xl relative block w-full px-12 py-4 border border-gray-300 
-                           placeholder-gray-500 text-gray-900 focus:outline-none 
-                           focus:ring-2 focus:ring-[#394C8C] focus:border-[#394C8C] 
-                           transition duration-300 ease-in-out"
-                placeholder="Şifrenizi girin"
-              />
-            </div>
+          <div className="relative">
+            <FontAwesomeIcon 
+              icon={faEnvelope} 
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+            />
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="E-posta"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#394C8C]"
+              required
+            />
           </div>
 
-          <div>
+          <div className="relative">
+            <FontAwesomeIcon 
+              icon={faLock} 
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+            />
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Şifre"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#394C8C]"
+              required
+            />
+          </div>
+
+          {!isLogin && (
+            <div className="relative">
+              <FontAwesomeIcon 
+                icon={faLock} 
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              />
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Şifre Tekrar"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#394C8C]"
+                required
+              />
+            </div>
+          )}
+
+          <button
+            type="submit"
+            className="w-full bg-[#394C8C] text-white py-3 rounded-lg font-semibold hover:bg-[#2C3A6A] transition-colors"
+          >
+            {isLogin ? 'Giriş Yap' : 'Hesap Oluştur'}
+          </button>
+
+          <div className="text-center">
             <button
-              type="submit"
-              className="group relative w-full flex justify-center py-4 px-6 
-                         border border-transparent text-lg font-bold rounded-full 
-                         text-white bg-[#394C8C] hover:bg-[#5A70B9] 
-                         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#394C8C]
-                         transform transition duration-300 hover:scale-[1.02] 
-                         hover:shadow-xl active:scale-95"
+              type="button"
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-[#394C8C] hover:text-[#2C3A6A] transition-colors"
             >
-              Giriş Yap
+              {isLogin 
+                ? 'Hesabınız yok mu? Hesap oluşturun' 
+                : 'Zaten hesabınız var mı? Giriş yapın'}
             </button>
           </div>
         </form>
-
-        <div className="text-center mt-6">
-          <p className="text-sm text-gray-600">
-            Henüz bir hesabınız yok mu?{' '}
-            <Link 
-              to="/register" 
-              className="font-semibold text-[#394C8C] hover:text-[#5A70B9] 
-                         transition duration-300 hover:underline"
-            >
-              Kayıt Olun
-            </Link>
-          </p>
-        </div>
       </div>
     </div>
   );
-}
+};
 
 export default LoginPage;
