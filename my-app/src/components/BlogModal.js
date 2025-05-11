@@ -18,7 +18,7 @@ const BlogModal = ({ blog, onClose }) => {
         <div className="p-6 md:p-8">
           <div className="relative w-full h-64 md:h-80 mb-6 rounded-xl overflow-hidden">
             <img 
-              src={blog.image} 
+              src={blog.image_url} 
               alt={blog.title}
               className="w-full h-full object-cover"
             />
@@ -33,12 +33,9 @@ const BlogModal = ({ blog, onClose }) => {
             <p className="text-base md:text-lg leading-relaxed mb-4">
               {blog.excerpt}
             </p>
-            <p className="text-base md:text-lg leading-relaxed">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </p>
-            <p className="text-base md:text-lg leading-relaxed mt-4">
-              Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
+            <div className="text-base md:text-lg leading-relaxed">
+              {blog.content}
+            </div>
           </div>
         </div>
       </div>

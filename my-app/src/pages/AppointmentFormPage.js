@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faUser, faPhone, faCalendarAlt, 
@@ -6,29 +6,10 @@ import {
   faHome
 } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../config/supabase';
 
 function AppointmentFormPage() {
-  const navigate = useNavigate();
-  const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
-  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [formData, setFormData] = useState({
-    fullName: '',
-    phoneNumber: '',
-    complaint: '',
-    selectedDate: '',
-    medicalFile: null
-  });
-
-  // Örnek dinamik saat listesi (gerçek senaryoda admin panelden gelecek)
-  const availableTimes = [
-    '09:00', '10:00', '11:00', '13:00', 
-    '14:00', '15:00', '16:00', '17:00'
-  ];
-
-  // Günleri ve ayları oluştur
-  const days = Array.from({length: 31}, (_, i) => i + 1);
+  // Ay ve yıl dizilerini en başa taşı
   const months = [
     'Ocak', 'Şubat', 'Mart', 'Nisan', 
     'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 
@@ -36,10 +17,59 @@ function AppointmentFormPage() {
   ];
   const currentYear = new Date().getFullYear();
 
-  const handleDateSelect = (day, month) => {
+  const navigate = useNavigate();
+  const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
+  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+  const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(months[new Date().getMonth()]);
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    phoneNumber: '',
+    complaint: '',
+    selectedDate: '',
+    medicalFile: null
+  });
+  const [unavailableTimes, setUnavailableTimes] = useState([]);
+
+  const today = new Date();
+
+  // Örnek dinamik saat listesi (gerçek senaryoda admin panelden gelecek)
+  const availableTimes = [
+    '09:00', '10:00', '11:00', '13:00', 
+    '14:00', '15:00', '16:00', '17:00'
+  ];
+
+  // Günleri oluştur
+  const days = Array.from({length: 31}, (_, i) => i + 1);
+
+  // Seçili tarih değiştiğinde unavailable_times'ı çek
+  useEffect(() => {
+    const fetchUnavailableTimes = async () => {
+      if (!formData.selectedDate) return;
+      const { data, error } = await supabase
+        .from('unavailable_times')
+        .select('*')
+        .eq('date', formData.selectedDate);
+      if (!error && data) {
+        setUnavailableTimes(data);
+      } else {
+        setUnavailableTimes([]);
+      }
+    };
+    fetchUnavailableTimes();
+  }, [formData.selectedDate]);
+
+  const handleDateSelect = (day, month, year) => {
     const monthIndex = months.indexOf(month) + 1;
-    const formattedDate = `${currentYear}-${monthIndex.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-    setSelectedDate(`${day} ${month} ${currentYear}`);
+    const formattedDate = `${year}-${monthIndex.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+    const selected = new Date(`${year}-${monthIndex.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
+    if (selected < new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
+      alert('Geçmiş bir tarih seçilemez!');
+      return;
+    }
+    setSelectedDate(`${day} ${month} ${year}`);
     setFormData(prev => ({...prev, selectedDate: formattedDate}));
     setIsDateModalOpen(false);
   };
@@ -53,18 +83,93 @@ function AppointmentFormPage() {
   };
 
   const handleTimeSelect = (time) => {
+    // Eğer seçilen gün bugünün tarihi ise, geçmiş saatler seçilemesin
+    if (formData.selectedDate) {
+      const selected = new Date(formData.selectedDate);
+      const now = new Date();
+      if (
+        selected.getFullYear() === now.getFullYear() &&
+        selected.getMonth() === now.getMonth() &&
+        selected.getDate() === now.getDate()
+      ) {
+        const [hour, minute] = time.split(':').map(Number);
+        if (hour < now.getHours() || (hour === now.getHours() && minute <= now.getMinutes())) {
+          alert('Geçmiş bir saat seçilemez!');
+          return;
+        }
+      }
+    }
     setSelectedTime(time);
     setIsTimeModalOpen(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const submissionData = {
-      ...formData,
-      selectedTime
-    };
-    console.log('Randevu Bilgileri:', submissionData);
-    alert('Randevu talebiniz alınmıştır.');
+    // Zorunlu alanlar kontrolü
+    if (!formData.fullName.trim() || !formData.phoneNumber.trim() || !formData.selectedDate || !selectedTime || !formData.complaint.trim()) {
+      alert('Lütfen tüm alanları eksiksiz doldurun!');
+      return;
+    }
+    // Ekstra kontrol: geçmiş tarih/saat engelle
+    const selectedDateObj = formData.selectedDate ? new Date(formData.selectedDate) : null;
+    if (
+      !selectedDateObj ||
+      selectedDateObj < new Date(today.getFullYear(), today.getMonth(), today.getDate())
+    ) {
+      alert('Geçmiş bir tarih için randevu alınamaz!');
+      return;
+    }
+    if (selectedDateObj) {
+      const now = new Date();
+      if (
+        selectedDateObj.getFullYear() === now.getFullYear() &&
+        selectedDateObj.getMonth() === now.getMonth() &&
+        selectedDateObj.getDate() === now.getDate()
+      ) {
+        if (selectedTime) {
+          const [hour, minute] = selectedTime.split(':').map(Number);
+          if (hour < now.getHours() || (hour === now.getHours() && minute <= now.getMinutes())) {
+            alert('Geçmiş bir saat için randevu alınamaz!');
+            return;
+          }
+        }
+      }
+    }
+    try {
+      let medicalFileUrl = null;
+      if (formData.medicalFile) {
+        // Dosya yükle
+        const fileExt = formData.medicalFile.name.split('.').pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('medical-files')
+          .upload(fileName, formData.medicalFile);
+        if (uploadError) throw uploadError;
+        medicalFileUrl = supabase.storage.from('medical-files').getPublicUrl(fileName).data.publicUrl;
+      }
+      // Randevu kaydı oluştur
+      const { data: userData } = await supabase.auth.getUser();
+      const userEmail = userData?.user?.email || null;
+      const { error: insertError } = await supabase
+        .from('appointments')
+        .insert([
+          {
+            full_name: formData.fullName,
+            phone_number: formData.phoneNumber,
+            date: formData.selectedDate,
+            time: selectedTime,
+            complaint: formData.complaint,
+            medical_file_url: medicalFileUrl,
+            status: 'Beklemede',
+            email: userEmail,
+          },
+        ]);
+      if (insertError) throw insertError;
+      alert('Randevu talebiniz başarıyla alındı!');
+      navigate('/');
+    } catch (err) {
+      alert('Hata: ' + err.message);
+    }
   };
 
   return (
@@ -268,25 +373,36 @@ function AppointmentFormPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-2xl max-w-md w-full">
             <h3 className="text-2xl font-bold text-[#394C8C] mb-4">Tarih Seçin</h3>
-            <div className="grid grid-cols-3 gap-2 mb-4">
-              {months.map((month) => (
-                <div key={month} className="text-center font-semibold text-[#394C8C] opacity-70">
-                  {month}
-                </div>
-              ))}
+            <div className="flex gap-2 mb-4">
+              <select value={selectedMonth} onChange={e => setSelectedMonth(e.target.value)} className="border rounded px-2 py-1">
+                {months.map(month => <option key={month} value={month}>{month}</option>)}
+              </select>
+              <select value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))} className="border rounded px-2 py-1">
+                {[currentYear, currentYear + 1].map(year => <option key={year} value={year}>{year}</option>)}
+              </select>
             </div>
             <div className="grid grid-cols-7 gap-2">
-              {days.map((day) => (
-                <button
-                  key={day}
-                  onClick={() => handleDateSelect(day, months[new Date().getMonth()])}
-                  className="py-2 px-4 rounded-lg transition-all duration-300 
-                    hover:bg-[#5A70B9] hover:text-white 
-                    focus:outline-none focus:ring-2 focus:ring-[#394C8C]"
-                >
-                  {day}
-                </button>
-              ))}
+              {days.map((day) => {
+                const monthIndex = months.indexOf(selectedMonth);
+                const isPast =
+                  selectedYear < today.getFullYear() ||
+                  (selectedYear === today.getFullYear() && monthIndex < today.getMonth()) ||
+                  (selectedYear === today.getFullYear() && monthIndex === today.getMonth() && day < today.getDate());
+
+                return (
+                  <button
+                    key={day}
+                    onClick={() => !isPast && handleDateSelect(day, selectedMonth, selectedYear)}
+                    disabled={isPast}
+                    className={`py-2 px-4 rounded-lg transition-all duration-300
+                      ${isPast
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                        : 'hover:bg-[#5A70B9] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#394C8C]'}`}
+                  >
+                    {day}
+                  </button>
+                );
+              })}
             </div>
             <button
               onClick={() => setIsDateModalOpen(false)}
@@ -304,18 +420,49 @@ function AppointmentFormPage() {
           <div className="bg-white p-8 rounded-2xl max-w-md w-full">
             <h3 className="text-2xl font-bold text-[#394C8C] mb-4">Saat Seçin</h3>
             <div className="grid grid-cols-4 gap-4">
-              {availableTimes.map((time) => (
-                <button
-                  key={time}
-                  onClick={() => handleTimeSelect(time)}
-                  className={`py-2 px-4 rounded-lg transition-all duration-300 
-                    ${selectedTime === time 
-                      ? 'bg-[#394C8C] text-white' 
-                      : 'bg-gray-200 hover:bg-[#5A70B9] hover:text-white'}`}
-                >
-                  {time}
-                </button>
-              ))}
+              {availableTimes.map((time) => {
+                let isPast = false;
+                if (formData.selectedDate) {
+                  const selected = new Date(formData.selectedDate);
+                  const now = new Date();
+                  if (
+                    selected.getFullYear() === now.getFullYear() &&
+                    selected.getMonth() === now.getMonth() &&
+                    selected.getDate() === now.getDate()
+                  ) {
+                    const [hour, minute] = time.split(':').map(Number);
+                    if (hour < now.getHours() || (hour === now.getHours() && minute <= now.getMinutes())) {
+                      isPast = true;
+                    }
+                  }
+                }
+                // Unavailable kontrolü
+                let isUnavailable = false;
+                unavailableTimes.forEach((row) => {
+                  const [startHour, startMinute] = row.start_time.split(':').map(Number);
+                  const [endHour, endMinute] = row.end_time.split(':').map(Number);
+                  const [tHour, tMinute] = time.split(':').map(Number);
+                  const t = tHour * 60 + tMinute;
+                  const start = startHour * 60 + startMinute;
+                  const end = endHour * 60 + endMinute;
+                  if (t >= start && t < end) {
+                    isUnavailable = true;
+                  }
+                });
+                const disabled = isPast || isUnavailable;
+                return (
+                  <button
+                    key={time}
+                    onClick={() => !disabled && handleTimeSelect(time)}
+                    disabled={disabled}
+                    className={`py-2 px-4 rounded-lg transition-all duration-300 \
+                      ${selectedTime === time ? 'bg-[#394C8C] text-white' : ''} \
+                      ${disabled ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-gray-200 hover:bg-[#5A70B9] hover:text-white'}`}
+                  >
+                    {time}
+                  </button>
+                );
+              })}
             </div>
             <button
               onClick={() => setIsTimeModalOpen(false)}

@@ -1,145 +1,142 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faLock, faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { supabase } from '../config/supabase';
 
 const LoginPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
-  const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    name: '',
-    confirmPassword: ''
-  });
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (isLogin) {
-      // Giriş kontrolü
-      if (formData.email === 'test@test.com' && formData.password === '123456') {
-        console.log('Giriş başarılı');
-        navigate('/appointment');
-      } else {
-        alert('E-posta veya şifre hatalı!');
-      }
-    } else {
-      // Kayıt işlemi
-      console.log('Kayıt olunuyor:', formData);
+    setLoading(true);
+    setError('');
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
       navigate('/appointment');
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#EFF5FB] to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-[#1E2E62]">
-            {isLogin ? 'Giriş Yap' : 'Hesap Oluştur'}
-          </h2>
-          <p className="text-gray-600 mt-2">
-            {isLogin 
-              ? 'Randevu oluşturmak için giriş yapın' 
-              : 'Yeni hesap oluşturarak randevu alabilirsiniz'}
-          </p>
+    <div className="min-h-screen bg-gradient-to-b from-[#EFF5FB] to-white">
+      <div className="absolute top-4 left-4">
+        <Link 
+          to="/" 
+          className="inline-flex items-center text-[#394C8C] hover:text-[#5A70B9] transition-colors group"
+        >
+            <FontAwesomeIcon 
+            icon={faArrowLeft} 
+            className="mr-2 transform group-hover:-translate-x-1 transition-transform" 
+          />
+          <span>Ana Sayfaya Dön</span>
+        </Link>
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {!isLogin && (
-            <div className="relative">
-              <FontAwesomeIcon 
-                icon={faUser} 
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              />
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Ad Soyad"
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#394C8C]"
-                required={!isLogin}
-              />
+        
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-full max-w-[320px] px-4">
+          <div className="bg-white rounded-xl shadow-lg p-5">
+            <div className="text-center mb-5">
+              <h1 className="text-lg font-bold text-[#1E2E62] mb-1">Giriş Yap</h1>
+              <p className="text-xs text-gray-600">Hesabınıza giriş yaparak randevu alabilirsiniz.</p>
             </div>
-          )}
 
-          <div className="relative">
-            <FontAwesomeIcon 
-              icon={faEnvelope} 
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-            />
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="E-posta"
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#394C8C]"
-              required
-            />
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <div>
+                <label htmlFor="email" className="block text-xs font-medium text-gray-700 mb-1">
+                  Email Adresi
+                </label>
+              <input
+                  type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#394C8C] focus:border-transparent text-sm"
+                  placeholder="ornek@email.com"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-xs font-medium text-gray-700 mb-1">
+                  Şifre
+                </label>
+              <input
+                  type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#394C8C] focus:border-transparent text-sm"
+                  placeholder="••••••••"
+                  required
+                />
+                <div className="mt-1 text-right">
+                  <Link 
+                    to="/forgot-password" 
+                    className="text-xs text-[#394C8C] hover:text-[#5A70B9] transition-colors"
+                  >
+                    Şifremi Unuttum
+                  </Link>
+            </div>
           </div>
 
-          <div className="relative">
-            <FontAwesomeIcon 
-              icon={faLock} 
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-            />
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Şifre"
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#394C8C]"
-              required
-            />
-          </div>
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  type="checkbox"
+                  className="h-3 w-3 text-[#394C8C] focus:ring-[#394C8C] border-gray-300 rounded"
+                />
+                <label htmlFor="remember-me" className="ml-2 block text-xs text-gray-700">
+                  Beni Hatırla
+                </label>
+              </div>
 
-          {!isLogin && (
-            <div className="relative">
-              <FontAwesomeIcon 
-                icon={faLock} 
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              />
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Şifre Tekrar"
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#394C8C]"
-                required
-              />
-            </div>
-          )}
+              {error && (
+                <div className="text-red-500 text-xs text-center">
+                  {error}
+                </div>
+              )}
 
-          <button
-            type="submit"
-            className="w-full bg-[#394C8C] text-white py-3 rounded-lg font-semibold hover:bg-[#2C3A6A] transition-colors"
-          >
-            {isLogin ? 'Giriş Yap' : 'Hesap Oluştur'}
-          </button>
-
-          <div className="text-center">
             <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-[#394C8C] hover:text-[#2C3A6A] transition-colors"
-            >
-              {isLogin 
-                ? 'Hesabınız yok mu? Hesap oluşturun' 
-                : 'Zaten hesabınız var mı? Giriş yapın'}
+              type="submit"
+                disabled={loading}
+                className={`w-full py-1.5 px-4 rounded-lg text-white font-medium text-sm
+                  ${loading 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-[#394C8C] hover:bg-[#5A70B9] transition-colors'
+                  }`}
+              >
+                {loading ? 'Giriş Yapılıyor...' : 'Giriş Yap'}
             </button>
+
+              <div className="text-center mt-2">
+                <p className="text-xs text-gray-600">
+                  Hesabınız yok mu?{' '}
+            <Link 
+              to="/register" 
+                    className="text-[#394C8C] hover:text-[#5A70B9] font-medium transition-colors"
+            >
+                    Kayıt Ol
+            </Link>
+          </p>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

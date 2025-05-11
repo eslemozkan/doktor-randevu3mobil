@@ -2,18 +2,65 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faLock, faHospitalUser } from '@fortawesome/free-solid-svg-icons';
+import { supabase } from '../config/supabase';
 
 function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    // Burada kayıt işlemi yapılacak
-    console.log('Kayıt bilgileri:', { email, password });
-    // Başarılı kayıt sonrası yönlendirme
-    navigate('/');
+    setLoading(true);
+    setError('');
+    try {
+      // 1. Auth ile kayıt ol
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      if (error) throw error;
+
+      const user = data.user;
+      if (user) {
+        // 2. profiles tablosunda var mı kontrol et
+        const { data: existingProfile, error: selectError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('id', user.id)
+          .single();
+
+        if (selectError && selectError.code !== 'PGRST116') throw selectError; // PGRST116: no rows found
+
+        if (!existingProfile) {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert([
+              {
+                id: user.id,
+                email: user.email,
+              },
+            ]);
+          if (profileError) throw profileError;
+        }
+
+        // Otomatik giriş yap
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (signInError) throw signInError;
+        navigate('/appointment');
+      } else {
+        setError('Kayıt başarılı, ancak kullanıcı bilgisi alınamadı. Lütfen giriş yapmayı deneyin.');
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -90,17 +137,22 @@ function RegisterPage() {
             </div>
           </div>
 
+          {error && (
+            <div className="text-red-500 text-sm text-center">{error}</div>
+          )}
+
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-4 px-6 
-                         border border-transparent text-lg font-bold rounded-full 
-                         text-white bg-[#394C8C] hover:bg-[#5A70B9] 
-                         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#394C8C]
-                         transform transition duration-300 hover:scale-[1.02] 
-                         hover:shadow-xl active:scale-95"
+              disabled={loading}
+              className={`group relative w-full flex justify-center py-4 px-6 \
+                         border border-transparent text-lg font-bold rounded-full \
+                         text-white bg-[#394C8C] hover:bg-[#5A70B9] \
+                         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#394C8C]\
+                         transform transition duration-300 hover:scale-[1.02] \
+                         hover:shadow-xl active:scale-95 ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
-              Hesap Oluştur
+              {loading ? 'Kayıt Olunuyor...' : 'Hesap Oluştur'}
             </button>
           </div>
         </form>

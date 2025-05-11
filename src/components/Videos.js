@@ -1,14 +1,47 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from '../config/supabase';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom';
 
 function Videos() {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchVideos();
+  }, []);
+
+  const fetchVideos = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('videos')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      if (error) throw error;
+      setVideos(data);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <section className="flex flex-col items-center px-20 pt-11 pb-20 w-full bg-slate-100 max-md:px-5 max-md:max-w-full">
+        <div className="text-[#1E2E62]">Yükleniyor...</div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="flex flex-col items-center px-20 pt-11 pb-20 w-full bg-slate-100 max-md:px-5 max-md:max-w-full">
+        <div className="text-red-500">Hata: {error}</div>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -29,18 +62,20 @@ function Videos() {
             />
           </button>
           <div className="flex gap-4 w-full justify-center">
-            <div
-              className="flex shrink-0 bg-zinc-300 h-[143px] w-[247px] rounded-lg overflow-hidden hover:opacity-90 transition-opacity cursor-pointer"
-              aria-label="Video thumbnail"
-            />
-            <div
-              className="flex shrink-0 bg-zinc-300 h-[143px] w-[246px] rounded-lg overflow-hidden hover:opacity-90 transition-opacity cursor-pointer"
-              aria-label="Video thumbnail"
-            />
-            <div
-              className="flex shrink-0 bg-zinc-300 h-[143px] w-[247px] rounded-lg overflow-hidden hover:opacity-90 transition-opacity cursor-pointer"
-              aria-label="Video thumbnail"
-            />
+            {videos.map((video) => (
+              <div
+                key={video.id}
+                className="flex shrink-0 bg-zinc-300 h-[143px] w-[247px] rounded-lg overflow-hidden hover:opacity-90 transition-opacity cursor-pointer"
+                aria-label="Video thumbnail"
+                onClick={() => window.open(`https://www.youtube.com/watch?v=${video.youtube_id}`, '_blank')}
+              >
+                <img
+                  src={video.thumbnail}
+                  alt={video.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
           </div>
           <button 
             aria-label="Next video"
@@ -54,14 +89,10 @@ function Videos() {
           </button>
         </div>
         <button 
-          onClick={() => navigate('/videos')}
-          className="group flex items-center space-x-3 bg-[#394C8C] text-white px-8 py-4 rounded-full font-semibold hover:bg-[#5A70B9] transition-all duration-300 shadow-lg hover:shadow-xl"
+          className="px-7 py-4 mt-16 max-w-full text-base font-bold text-white bg-blue-900 rounded-[40px] w-[149px] max-md:px-5 max-md:mt-10 hover:bg-blue-800 transition-colors"
+          onClick={() => window.location.href = '/videos'}
         >
-          <span>Tüm Videolar</span>
-          <FontAwesomeIcon 
-            icon={faArrowRight} 
-            className="transform transition-transform group-hover:translate-x-1"
-          />
+          Tümünü Gör
         </button>
       </div>
     </section>

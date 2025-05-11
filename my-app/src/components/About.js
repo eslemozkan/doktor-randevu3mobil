@@ -59,7 +59,7 @@ function About() {
             </div>
             
             <Link 
-              to="/hakkimda-detay"
+              to="/hakkimda-detay" 
               className="inline-flex items-center justify-center px-6 py-3 bg-[#394C8C] text-white rounded-full 
                          hover:bg-[#5A70B9] transition-colors duration-300 shadow-lg hover:shadow-xl"
             >
